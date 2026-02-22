@@ -50,7 +50,7 @@ const App: React.FC = () => {
               C
             </div>
             <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600 tracking-tight">
-              ChemGenius
+              Chem Pro
             </span>
           </button>
           
