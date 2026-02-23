@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { User, UserRole } from '../types';
-import { login, signUp, verifyAdminKey } from '../services/localStorageService';
+import { User } from '../types';
+import { firebaseSignUp, firebaseSignIn, verifyAdminKey } from '../services/firebaseAuthService';
 
 interface Props {
   onAuthSuccess: (user: User) => void;
@@ -11,36 +11,56 @@ const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<UserRole>('student');
+  const [role, setRole] = useState<'student' | 'admin'>('student');
   const [adminKey, setAdminKey] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
     
     // Check if trying to signup/login as admin without valid key
     if (role === 'admin') {
       if (!adminKey.trim()) {
         setError('Admin key required to access admin role.');
+        setLoading(false);
         return;
       }
       if (!verifyAdminKey(adminKey)) {
         setError('Invalid admin key.');
+        setLoading(false);
         return;
       }
     }
 
     try {
+      let user;
       if (mode === 'login') {
-        const user = login(email, password);
-        onAuthSuccess(user);
+        const fbUser = await firebaseSignIn(email, password);
+        user = {
+          id: fbUser.id,
+          name: fbUser.name,
+          email: fbUser.email,
+          role: fbUser.role,
+          createdAt: fbUser.createdAt,
+        };
       } else {
-        const user = signUp(name, email, password, role);
-        onAuthSuccess(user);
+        const fbUser = await firebaseSignUp(email, password, name, role);
+        user = {
+          id: fbUser.id,
+          name: fbUser.name,
+          email: fbUser.email,
+          role: fbUser.role,
+          createdAt: fbUser.createdAt,
+        };
       }
+      onAuthSuccess(user);
     } catch (err) {
       setError((err as Error).message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -142,9 +162,10 @@ const AuthPage: React.FC<Props> = ({ onAuthSuccess }) => {
 
           <button
             type="submit"
-            className="w-full py-3 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600"
+            disabled={loading}
+            className="w-full py-3 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {mode === 'login' ? 'Login' : 'Create Account'}
+            {loading ? 'Please wait...' : (mode === 'login' ? 'Login' : 'Create Account')}
           </button>
         </form>
       </div>
