@@ -72,14 +72,15 @@ export const getResultsForUserFirebase = async (userId: string): Promise<CBTResu
   try {
     const q = query(
       collection(db, 'cbtResults'),
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc')
+      where('userId', '==', userId)
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
+    const results = snapshot.docs.map(doc => ({
       ...(doc.data() as CBTResult),
       id: doc.id,
     }));
+    // Sort on client side
+    return results.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   } catch (error) {
     console.error('Error fetching user results:', error);
     return [];
