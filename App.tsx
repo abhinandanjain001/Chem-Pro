@@ -1,5 +1,5 @@
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { AppView, Topic, User } from './types';
 import QuestionOrganizer from './components/QuestionOrganizer';
 import DiagramGenerator from './components/DiagramGenerator';
@@ -11,13 +11,33 @@ import ProfilePage from './components/ProfilePage';
 import AuthPage from './components/AuthPage';
 import ChatBot from './components/ChatBot';
 import AdminPanel from './components/AdminPanel';
-import { getCurrentUser, logout } from './services/localStorageService';
+import { getCurrentUser, firebaseSignOut } from './services/firebaseAuthService';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [topics, setTopics] = useState<Topic[]>([]);
-  const [user, setUser] = useState<User | null>(getCurrentUser());
+  const [user, setUser] = useState<User | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Initialize Firebase Auth listener
+  useEffect(() => {
+    const unsubscribe = getCurrentUser((fbUser) => {
+      if (fbUser) {
+        setUser({
+          id: fbUser.id,
+          name: fbUser.name,
+          email: fbUser.email,
+          role: fbUser.role,
+          createdAt: fbUser.createdAt,
+        });
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+    return unsubscribe;
+  }, []);
 
   const navViews = useMemo(() => (['home', 'organizer', 'diagrams', 'quiz', 'notes', 'cbt', 'chat', ...(user?.role === 'admin' ? ['admin'] : []), 'profile'] as AppView[]), [user?.role]);
 
@@ -26,11 +46,22 @@ const App: React.FC = () => {
     setTopics(prev => [...prev, ...newTopics]);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await firebaseSignOut();
     setUser(null);
     setCurrentView('auth');
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-600 to-teal-500 animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-600 font-semibold">Loading Chem Pro...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen font-sans selection:bg-teal-200 selection:text-teal-900 bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 fixed inset-0 overflow-auto">
