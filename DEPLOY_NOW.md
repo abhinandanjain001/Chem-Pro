@@ -54,7 +54,7 @@ After deployment, your site won't work yet! You need to add the API key:
 4. Enter:
    ```
    Key:   VITE_API_KEY
-   Value: AIzaSyREDACTED_GEMINI_KEY
+   Value: AIzaSyYOUR_GEMINI_API_KEY
    ```
 5. Click **"Save"**
 

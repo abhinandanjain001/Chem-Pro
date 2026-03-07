@@ -31,7 +31,7 @@ Open: https://app.netlify.com/drop
 4. Set:
    ```
    Key: VITE_API_KEY
-   Value: AIzaSyREDACTED_GEMINI_KEY
+   Value: AIzaSyYOUR_GEMINI_API_KEY
    ```
 5. Click "Save"
 6. Go to "Deploys" → Click "Trigger deploy" → "Deploy site"
@@ -65,7 +65,7 @@ When prompted:
 
 ### **Step 4: Set Environment Variable**
 ```powershell
-netlify env:set VITE_API_KEY AIzaSyREDACTED_GEMINI_KEY
+netlify env:set VITE_API_KEY AIzaSyYOUR_GEMINI_API_KEY
 ```
 
 ### **Step 5: Redeploy with env variable**
@@ -116,7 +116,7 @@ git push -u origin main
 1. Go to "Site settings" → "Environment variables"
 2. Add:
    ```
-   VITE_API_KEY = AIzaSyREDACTED_GEMINI_KEY
+   VITE_API_KEY = AIzaSyYOUR_GEMINI_API_KEY
    ```
 3. Trigger new deploy
 
@@ -130,7 +130,7 @@ Your `.env.local` file is in `.gitignore` for security!
 ### **You MUST set it in Netlify:**
 ```
 Key: VITE_API_KEY
-Value: AIzaSyREDACTED_GEMINI_KEY
+Value: AIzaSyYOUR_GEMINI_API_KEY
 ```
 
 ### **Where to Set:**
@@ -264,7 +264,7 @@ cd C:\Users\rashm\Downloads\chemi\chemimind_extracted
 netlify deploy --prod --dir=dist
 
 # Set env variable
-netlify env:set VITE_API_KEY AIzaSyREDACTED_GEMINI_KEY
+netlify env:set VITE_API_KEY AIzaSyYOUR_GEMINI_API_KEY
 
 # Redeploy
 netlify deploy --prod --dir=dist

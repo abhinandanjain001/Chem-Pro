@@ -14,7 +14,7 @@ I've created a `.env.production` file that includes your API key directly in the
 
 ### **1. Created `.env.production`**
 ```env
-VITE_API_KEY=AIzaSyREDACTED_GEMINI_KEY
+VITE_API_KEY=AIzaSyYOUR_GEMINI_API_KEY
 ```
 
 This file is used when building for production (`npm run build`).
