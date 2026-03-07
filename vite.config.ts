@@ -3,7 +3,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  // Custom domain on GitHub Pages serves from root
   base: '/',
   server: {
     port: 3000,
